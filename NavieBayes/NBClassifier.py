@@ -1,20 +1,24 @@
+
 import pandas as pd
 import random as rd
 import math
 
 def main():
-    filename ='D:\Spring2018\Artificial Intelligence\Textdataset.csv'
+    filename ='D:\Spring2019\DataMining\LabelTest.csv'
     rd.seed(1)
     #print(filename)
     dataset = loadCSV(filename)
     #print(dataset.iat[0,0])
     atts = dataset.columns.values
-    atts = atts[0:((len(atts))-1)]
+    atts = atts[1:((len(atts))-1)]
     #print(dataset['GRAPEFRUIT PEEL'])
     #print(atts)
     #print(dataset.values)
     #fold = Cross_Validation(dataset, 4)
     dataset_Y, dataset_N = Group_Class(dataset)
+    num_Y = dataset_Y.shape[0]
+    num_X = dataset_N.shape[0]
+    #print(num_X,num_Y)
    # print(dataset_Y)
     #dataset_Y = pd.DataFrame(dataset_Y)
     #dataset_N = pd.DataFrame(dataset_N)
@@ -26,7 +30,7 @@ def main():
     dataset_Y_pro = Cal_All_Attributs(dataset_Y,atts)
     dataset_N_pro = Cal_All_Attributs(dataset_N,atts)
     #print(dataset_Y_pro)
-    print(dataset_N_pro)
+    #print(dataset_N_pro)
 
 
 """
@@ -80,13 +84,6 @@ def Cal_All_Attributs(class_Y, atts):
     labels = ['ATT=0', 'ATT=1']
     ar = pd.DataFrame(array,labels)
     return ar
-
-
-
-
-
-
-
 
 
 
