@@ -1,73 +1,8 @@
 import pandas as pd
 import random as rd
-import math
-
-def main():
-    filename ='D:\Spring2019\DataMining\Dataset\Output.csv'
-    rd.seed(1)
-    #print(filename)
-
-#Load the data
-    dataset = loadCSV(filename)
-    #print(dataset.iat[0,0])
-#Extract the attributes to be calculated
-    atts = dataset.columns.values
-    #print(atts)
-    atts = atts[8:((len(atts))-1)]
-    array = list(range(5))
-
-    #print(len(atts))
-    #data = dataset[atts]
-    #print(data)
-   # print(dataset.iat[0,0])
-
-    #print(dataset['GRAPEFRUIT PEEL'])
-    #print(atts)
-    #print(dataset.values)
-    #fold = Cross_Validation(dataset, 4)
-    Total_sample = dataset.shape[0]
-    dataset_Y, dataset_N = Group_Class(dataset)
-
-    num_Y = dataset_Y.shape[0]
-    num_N = dataset_N.shape[0]
-
-#Calculate class distrubution
-    pro_Y = float(num_Y/Total_sample)
-    pro_N = float(num_N/Total_sample)
-
-    #print(num_X,num_Y)
-
-    #dataset_Y = pd.DataFrame(dataset_Y)
-    #dataset_N = pd.DataFrame(dataset_N)
-    #print(dataset_Y)
-#Testing Cal_Pro_att0 function
-    #att = 'GRAPEFRUIT'
-    #pro0, pro1 =Cal_Pro_att0(dataset_Y,att)
-    #print(pro0, ' ', pro1)
-
-#Calculating all the attributes probabliaty in Y/N class without any fix
-    dataset_Y_pro = Cal_All_Attributs(dataset_Y,atts)
-    dataset_N_pro = Cal_All_Attributs(dataset_N,atts)
-    #print(dataset_Y_pro)
-    #print(dataset_N_pro)
-
-#Initilize test dataset
-    test_data = dataset.iloc[ 50:250,:]
-    test_data_Labels = test_data['Label']
-    #Get the NB in Y class
-    test_pro_Y = Get_Pro(test_data, dataset_Y_pro, atts)
-    #Get the NB in N class
-    test_pro_N = Get_Pro(test_data,dataset_N_pro,atts)
-
-    #print(test_pro)
-
-#Calculate NB
-    pro_Ori = Classify_NB(test_pro_Y, test_pro_N, pro_Y, pro_N)
-    pro_Ori['Actual_Labels'] = test_data_Labels.values
-    print(pro_Ori)
-    Confusion_Matrix(pro_Ori)
-
-
+"""
+Navie Bayes without any estimation
+"""
 """
     array = {'name':[1,2,4],
              'age':[20,30,40]}
@@ -82,23 +17,12 @@ def loadCSV(filename):
     dataset = pd.DataFrame(dataset)
     return dataset
 
-#K-fold
-def Cross_Validation(dataset, n_splits):
-    num_instances = dataset.shape[0]
-    train_set = pd.DataFrame()
-    dataset_copy = dataset.copy()
-    fold_size = int(num_instances/n_splits)
-    for i in range(n_splits):
-
-        index = rd.randrange(num_instances)
-
-    return [train_set, dataset_copy]
-
 #Seperate Class by 'Label'
 def Group_Class(dataset):
     class_N, class_Y = (g for _, g in dataset.groupby('Label'))
     #class_N, class_Y = dataset.groupby('Label')
     return [class_Y, class_N]
+
 
 #Calculate the probablity of one attributs in one class
 def Cal_Pro_att_Ori(class_Y,att):
@@ -115,22 +39,17 @@ def Cal_Pro_att_Ori(class_Y,att):
             att_1 += 1
     pro_0 = float(att_0/(len(class_Y)))
     pro_1 = float(att_1/(len(class_Y)))
-
     return pro_0, pro_1
-
-def Cal_All_Attributs(class_Y, atts):
+def Cal_All_Attributs_Ori(class_Y, atts):
     size = len(atts)
     pro_0 = [0]*size
     pro_1 = [0]*size
-
     for i in range(size):
         pro_0[i], pro_1[i] = Cal_Pro_att_Ori(class_Y,atts[i])
         #pro_1[i] = Cal_Pro_att1(class_Y,atts[i])
     array = { 'ATT=0' : pro_0,
                 'ATT=1' : pro_1}
-
     ar = pd.DataFrame(array, atts)
-
     return ar
 
 
@@ -201,7 +120,8 @@ def Confusion_Matrix(pro_Ori):
     matrix = pd.DataFrame(array,actual_Class)
     print("Confusion Matrix: ")
     print(matrix)
-
+    precision = 0
+    recall = 0
     acc = float((tp+tn)/(tp+fn+fp+tn))
     print("Accuracy: {}".format(acc))
     if(tp != 0):
@@ -209,18 +129,78 @@ def Confusion_Matrix(pro_Ori):
         recall = float(tp/(tp+fn))
         print("Precision: {}".format(precision))
         print("Recall: {}".format(recall))
+    print()
+
+    return acc, precision, recall
 #Print accuracy, recall and precision
 
+#Get the result
+def NBRresult(train_set, test_set):
+    rd.seed(1)
+    # print(filename)
 
 
+    # print(dataset.iat[0,0])
+    # Extract the attributes to be calculated
+    atts = train_set.columns.values
+    # print(atts)
+    atts = atts[8:((len(atts)) - 1)]
 
+    Total_sample = train_set.shape[0]
+    train_set_Y, train_set_N = Group_Class(train_set)
+    num_Y = train_set_Y.shape[0]
+    num_N = train_set_N.shape[0]
+    # Calculate class distrubution
+    pro_Y = float(num_Y / Total_sample)
+    pro_N = float(num_N / Total_sample)
     #return matrix, acc, precision,recall
 
+    # print(len(atts))
+    # data = dataset[atts]
+    # print(data)
+    # print(dataset.iat[0,0])
+
+    # print(dataset['GRAPEFRUIT PEEL'])
+    # print(atts)
+    # print(dataset.values)
+    # fold = Cross_Validation(dataset, 4)
+
+    # Cross_Validation(dataset, 5)
+
+    # print(num_X,num_Y)
+
+    # dataset_Y = pd.DataFrame(dataset_Y)
+    # dataset_N = pd.DataFrame(dataset_N)
+    # print(dataset_Y)
+    # Testing Cal_Pro_att0 function
+    # att = 'GRAPEFRUIT'
+    # pro0, pro1 =Cal_Pro_att0(dataset_Y,att)
+    # print(pro0, ' ', pro1)
+
+    # Calculating all the attributes probabliaty in Y/N class without any fix
+    dataset_Y_pro = Cal_All_Attributs_Ori(train_set_Y, atts)
+    dataset_N_pro = Cal_All_Attributs_Ori(train_set_N, atts)
+    # print(dataset_Y_pro)
+    # print(dataset_N_pro)
+
+    # Initilize test dataset
+    #test_data = dataset.iloc[50:250, :]
+    test_data_Labels = test_set['Label']
+    # Get the NB in Y class
+    test_pro_Y = Get_Pro(test_set, dataset_Y_pro, atts)
+    # Get the NB in N class
+    test_pro_N = Get_Pro(test_set, dataset_N_pro, atts)
+
+    # print(test_pro)
+
+    # Calculate NB
+    pro_Ori = Classify_NB(test_pro_Y, test_pro_N, pro_Y, pro_N)
+    pro_Ori['Actual_Labels'] = test_data_Labels.values
+    #Print the Final probablity
+    #print(pro_Ori)
+    acc, pre, recall = Confusion_Matrix(pro_Ori)
+
+    return acc, pre, recall
 
 
 
-
-
-
-
-main()
