@@ -3,7 +3,7 @@ import random as rd
 import NavieBayes.NBClassifier as nb
 
 def main():
-    filename = 'D:\Spring2019\DataMining\Dataset\Output.csv'
+    filename = 'D:\Spring2019\DataMining\Dataset\OutputnoLabel.csv'
     # Load the data
     dataset = nb.loadCSV(filename)
     #print(dataset.shape)
@@ -17,6 +17,7 @@ def Cross_Validation(dataset, n_splits):
     class_Y, class_N = nb.Group_Class(dataset)
     num_class_Y = class_Y.shape[0]
     num_class_N = class_N.shape[0]
+
     foldsize_Y = int(num_class_Y / n_splits)
     foldsize_N = int(num_class_N / n_splits)
 

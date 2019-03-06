@@ -1,5 +1,6 @@
 import pandas as pd
 import random as rd
+import numpy as np
 """
 Navie Bayes without any estimation
 """
@@ -15,6 +16,7 @@ def loadCSV(filename):
     dataset = pd.read_csv(filename)
     dataset.head()
     dataset = pd.DataFrame(dataset)
+    dataset['Label'] = np.where(dataset['Score'] < 91, 0, 1)
     return dataset
 
 #Seperate Class by 'Label'
@@ -37,8 +39,11 @@ def Cal_Pro_att_Ori(class_Y,att):
             att_0 += 1
         else:
             att_1 += 1
-    pro_0 = float(att_0/(len(class_Y)))
-    pro_1 = float(att_1/(len(class_Y)))
+
+    #pro_0 = float(att_0/(len(class_Y)))
+    #pro_1 = float(att_1/(len(class_Y)))
+    pro_0 = float((att_0 + 1) / (len(class_Y) + 2))
+    pro_1 = float((att_1 + 1) / (len(class_Y) + 2))
     return pro_0, pro_1
 def Cal_All_Attributs_Ori(class_Y, atts):
     size = len(atts)
@@ -93,7 +98,7 @@ def Classify_NB(test_pro_Y, test_pro_N, pro_Y, pro_N):
             sample_class[i] = 1
         else:
             sample_class[i] = 0
-    pro_Ori['Pridict_Class'] = sample_class
+    pro_Ori['Predict_Class'] = sample_class
 
     return pro_Ori
 
@@ -112,12 +117,13 @@ def Confusion_Matrix(pro_Ori):
         else:
             tn = tn+1
 
-    array = {'Predicted Class = 90+' :[tp,fp],
-             'Predicted Class = 90-' : [fn,tn]}
+    array = {'Predicted Class = 91+' :[tp,fp],
+             'Predicted Class = 91-' : [fn,tn]}
 
-    actual_Class = ['Actual Class = 90+ ', 'Actual Class = 90-']
+    actual_Class = ['Actual Class = 91+ ', 'Actual Class = 91-']
 #Put two list into a dataframe
     matrix = pd.DataFrame(array,actual_Class)
+    matrix.to_csv(r'D:\Spring2019\DataMining\Output\Con_Matrix.csv')
     print("Confusion Matrix: ")
     print(matrix)
     precision = 0
@@ -143,8 +149,8 @@ def NBRresult(train_set, test_set):
     # print(dataset.iat[0,0])
     # Extract the attributes to be calculated
     atts = train_set.columns.values
-    # print(atts)
-    atts = atts[8:((len(atts)) - 1)]
+    #print(atts)
+    atts = atts[7:((len(atts)) - 1)]
 
     Total_sample = train_set.shape[0]
     train_set_Y, train_set_N = Group_Class(train_set)
@@ -153,6 +159,7 @@ def NBRresult(train_set, test_set):
     # Calculate class distrubution
     pro_Y = float(num_Y / Total_sample)
     pro_N = float(num_N / Total_sample)
+
     #return matrix, acc, precision,recall
 
     # print(len(atts))
@@ -173,15 +180,17 @@ def NBRresult(train_set, test_set):
     # dataset_N = pd.DataFrame(dataset_N)
     # print(dataset_Y)
     # Testing Cal_Pro_att0 function
-    # att = 'GRAPEFRUIT'
-    # pro0, pro1 =Cal_Pro_att0(dataset_Y,att)
-    # print(pro0, ' ', pro1)
+    #att = 'GRAPEFRUIT'
+    #pro0, pro1 =Cal_Pro_att_Ori(train_set_Y,att)
+    #print(pro0, ' ', pro1)
 
     # Calculating all the attributes probabliaty in Y/N class without any fix
     dataset_Y_pro = Cal_All_Attributs_Ori(train_set_Y, atts)
     dataset_N_pro = Cal_All_Attributs_Ori(train_set_N, atts)
-    # print(dataset_Y_pro)
-    # print(dataset_N_pro)
+    dataset_Y_pro.to_csv(r'D:\Spring2019\DataMining\Output\Dataset_Y_pro.csv')
+    dataset_N_pro.to_csv(r'D:\Spring2019\DataMining\Output\Dataset_N_pro.csv')
+    print(dataset_Y_pro)
+    print(dataset_N_pro)
 
     # Initilize test dataset
     #test_data = dataset.iloc[50:250, :]
@@ -196,8 +205,9 @@ def NBRresult(train_set, test_set):
     # Calculate NB
     pro_Ori = Classify_NB(test_pro_Y, test_pro_N, pro_Y, pro_N)
     pro_Ori['Actual_Labels'] = test_data_Labels.values
+    pro_Ori.to_csv(r'D:\Spring2019\DataMining\Output\Dataset_ALL_Pro.csv')
     #Print the Final probablity
-    #print(pro_Ori)
+    print(pro_Ori)
     acc, pre, recall = Confusion_Matrix(pro_Ori)
 
     return acc, pre, recall

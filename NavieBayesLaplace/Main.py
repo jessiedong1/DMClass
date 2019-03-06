@@ -1,11 +1,18 @@
-import NavieBayes.NBClassifier as nb
-import NavieBayes.Corss_Validation as cv
+import numpy as np
+import pandas as pd
+
+
 
 def main():
-    filename = 'D:\Spring2019\DataMining\Dataset\Output.csv'
+    filename = 'D:\Spring2019\DataMining\Dataset\OutputnoLabel.csv'
     # Load the data
-    dataset = nb.loadCSV(filename)
-    #print(dataset.shape)
-    cv. Cross_Validation(dataset, 5)
+    dataset = pd.read_csv(filename)
+    dataset.head()
+    dataset = pd.DataFrame(dataset)
+    dataset['Label'] = np.where(dataset['Score'] < 91, 0, 1)
+    print(dataset)
+    #print(dataset.groupby('Label').count())
+
+
 
 main()
