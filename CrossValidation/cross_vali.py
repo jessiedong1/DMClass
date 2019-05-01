@@ -4,7 +4,7 @@ import NavieBayes.NBClassifier as nb
 import numpy as np
 
 def main():
-    rd.seed(0)
+    #rd.seed(1)
     filename = 'D:\Spring2019\DataMining\Dataset\OutputnoLabel.csv'
     # Load the data
     dataset = nb.loadCSV(filename)
@@ -166,7 +166,6 @@ def Cross_Validation(dataset, n_splits):
 
 
 #Naive Bayes
-    """
     print("Result for fold 1")
     dataset_Y_pro_1, dataset_N_pro_1, Pro_fold_1, acc1, precision1, recall1 = nb.NBRresult(train_set1, test_set1)
     dataset_Y_pro_1.to_csv(r'D:\Spring2019\DataMining\Output\Dataset_Y_pro_1.csv')
@@ -203,6 +202,6 @@ def Cross_Validation(dataset, n_splits):
     print("Accuracy Ave: {:.4f}".format(acc_avg))
     print("Precision Ave: {:.4f}".format(precision_avg))
     print("Recall Ave: {:.4f}".format(recall_avg))
- """
+
 
 main()

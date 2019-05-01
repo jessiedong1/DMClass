@@ -143,24 +143,26 @@ def MLP(train_x,train_y,test_x, test_y, epoch, batch_size):
     #20
 
     #layer = layers.Dense(100, activation="relu", input_shape=(train_x.shape[1],))
-    model.add(layers.Dense(600, activation="relu", input_shape=(train_x.shape[1],),kernel_regularizer=regularizers.l2(1e-10),activity_regularizer=regularizers.l1(1e-10)))
-    model.add(layers.Dropout(0.3, noise_shape=None, seed=None))
+    model.add(layers.Dense(60, activation="relu", input_shape=(train_x.shape[1],),kernel_regularizer=regularizers.l2(1e-10),activity_regularizer=regularizers.l1(1e-10)))
+    model.add(layers.Dropout(0.1, noise_shape=None, seed=None))
     #model.add(layers.Dense(30, activation="relu", kernel_regularizer=regularizers.l2(1e-10),activity_regularizer=regularizers.l1(1e-10)))
     #model.add(layers.Dropout(0.05, noise_shape=None, seed=None))
-    model.add(layers.Dense(300, activation="relu",  kernel_regularizer=regularizers.l2(1e-10), activity_regularizer=regularizers.l1(1e-10)))
-    model.add(layers.Dropout(0.1, noise_shape=None, seed=None))
-    model.add(layers.Dense(100, activation="relu", kernel_regularizer=regularizers.l2(1e-10), activity_regularizer=regularizers.l1(1e-10)))
-    model.add(layers.Dropout(0.1, noise_shape=None, seed=None))
-    model.add(layers.Dense(60, activation="relu", kernel_regularizer=regularizers.l2(1e-10),
-                           activity_regularizer=regularizers.l1(1e-10)))
-    model.add(layers.Dropout(0.1, noise_shape=None, seed=None))
-    model.add(layers.Dense(30, activation="relu", kernel_regularizer=regularizers.l2(1e-10),
-                           activity_regularizer=regularizers.l1(1e-10)))
+    #model.add(layers.Dense(300, activation="relu",  kernel_regularizer=regularizers.l2(1e-10), activity_regularizer=regularizers.l1(1e-10)))
+    #model.add(layers.Dropout(0.1, noise_shape=None, seed=None))
+    #model.add(layers.Dense(100, activation="relu", kernel_regularizer=regularizers.l2(1e-10), activity_regularizer=regularizers.l1(1e-10)))
+    #model.add(layers.Dropout(0.1, noise_shape=None, seed=None))
+    #model.add(layers.Dense(60, activation="relu", kernel_regularizer=regularizers.l2(1e-10),activity_regularizer=regularizers.l1(1e-10)))
+    #model.add(layers.Dropout(0.1, noise_shape=None, seed=None))
+    model.add(layers.Dense(30, activation="relu", kernel_regularizer=regularizers.l2(1e-10), activity_regularizer=regularizers.l1(1e-10)))
     model.add(layers.Dense(10, activation="relu", kernel_regularizer=regularizers.l2(1e-10),activity_regularizer=regularizers.l1(1e-10)))
 
     #model.add(layers.Dense(10))
     model.add(layers.Dense(1, activation="sigmoid"))
-
+    #from keras.utils import plot_model
+    #plot_model(model, to_file='model.png')
+    #json_string = model.to_json()
+    #with open('mlp_model.json', 'w') as of:
+        #of.write(json_string)
     """
 
     layer = layers.Dense(500,activation="relu", input_shape=(train_x.shape[1],),kernel_regularizer=regularizers.l2(1e-10), activity_regularizer=regularizers.l1(1e-10))
@@ -186,9 +188,9 @@ def MLP(train_x,train_y,test_x, test_y, epoch, batch_size):
     #model.add(layers.Dense(1, activation="sigmoid",kernel_regularizer=regularizers.l2(1e-10),activity_regularizer=regularizers.l1(1e-10)))
     model.summary()
 
-    adam = Adam(lr=0.0001, beta_1=0.9, beta_2=0.999, epsilon=None, decay=0.0, amsgrad=False)
+    #adam = Adam(lr=0.0001, beta_1=0.9, beta_2=0.999, epsilon=None, decay=0.0, amsgrad=False)
 
-    model.compile(loss='binary_crossentropy', metrics=['accuracy', keras_metrics.precision(),keras_metrics.recall()],optimizer=adam)
+    model.compile(loss='binary_crossentropy', metrics=['accuracy', keras_metrics.precision(),keras_metrics.recall()],optimizer='sgd')
 
 
 # Get the loss and accuracy by using cross validation
@@ -200,7 +202,7 @@ def MLP(train_x,train_y,test_x, test_y, epoch, batch_size):
 
 def Cro_val(trainset1_X, trainset1_y, testset1_X, testset1_y):
     epoch = 50
-    batch_size = 50
+    batch_size = 30
     result1 = MLP(trainset1_X, trainset1_y, testset1_X, testset1_y, epoch, batch_size)
 
     show_result(result1)
