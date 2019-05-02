@@ -1,4 +1,11 @@
-from NavieBayes.MLP import *
+import numpy as np
+np.random.seed(333)
+from keras import models
+from keras import layers
+import matplotlib.pyplot as plt
+from keras.optimizers import Adam
+from keras import regularizers
+import keras_metrics
 
 def main():
     trainset1 = np.load('train_set1.npy')
@@ -97,6 +104,124 @@ def main():
     print("Accuracy Ave: {:.4f}".format(avg_acc))
     print("Precision Ave: {:.4f}".format(avg_pre))
     print("Recall Ave: {:.4f}".format(avg_recall))
+def split_x_y(dataset):
+    columns = dataset.shape[1]-1
+    #print(dataset)
+    x = dataset[:, 7: columns]
+    #print(x[:,983])
+    y = dataset[:,columns]
+    #print(y)
+
+
+    return x,y
+
+
+#Bulid MLP classifier
+def MLP(train_x,train_y,test_x, test_y, epoch, batch_size):
+    # One hidden layer with 60 neurons
+    model = models.Sequential()
+
+    model.add(layers.Dense(60, activation="relu", input_shape=(train_x.shape[1],),kernel_regularizer=regularizers.l2(1e-10),activity_regularizer=regularizers.l1(1e-10)))
+    model.add(layers.Dropout(0.1, noise_shape=None, seed=None))
+
+    model.add(layers.Dense(30, activation="relu", kernel_regularizer=regularizers.l2(1e-10), activity_regularizer=regularizers.l1(1e-10)))
+    model.add(layers.Dense(10, activation="relu", kernel_regularizer=regularizers.l2(1e-10),activity_regularizer=regularizers.l1(1e-10)))
+
+    model.add(layers.Dense(1, activation="sigmoid"))
+    model.summary()
+
+    #adam = Adam(lr=0.0001, beta_1=0.9, beta_2=0.999, epsilon=None, decay=0.0, amsgrad=False)
+
+    model.compile(loss='binary_crossentropy', metrics=['accuracy', keras_metrics.precision(),keras_metrics.recall()],optimizer='sgd')
+
+
+# Get the loss and accuracy by using cross validation
+    results_mlp = model.fit(train_x,train_y, epochs=epoch, batch_size= batch_size, validation_data=(test_x, test_y))
+    #print(model.get_weights())
+    #weights_mlp = layer.get_weights()
+    return results_mlp
+
+
+def Cro_val(trainset1_X, trainset1_y, testset1_X, testset1_y):
+    epoch = 50
+    batch_size = 30
+    result1 = MLP(trainset1_X, trainset1_y, testset1_X, testset1_y, epoch, batch_size)
+
+    show_result(result1)
+    result1 = result1.history
+    result1.keys()
+    val_acc1 = result1['val_acc']
+
+    val_acc1 = val_acc1[epoch]
+    val_pre1 = result1['val_precision']
+    #val_pre1 = np.sort(val_pre1)
+    val_pre1 = val_pre1[epoch]
+    val_recall1 = result1['val_recall']
+    #val_recall1 = np.sort(val_recall1)
+    val_recall1 = val_recall1[epoch]
+
+    return val_acc1, val_pre1, val_recall1
+
+def show_result(result_lp):
+    result = result_lp.history
+    result.keys() #dict_keys(['val_loss', 'val_acc', 'val_precision', 'val_recall', 'loss', 'acc', 'precision', 'recall'])
+    #train_loss = result['loss']
+    #train_loss.insert(0,0)
+
+    #val_loss = result['val_loss']
+    #val_loss.insert(0,0)
+    #Accuracy
+    train_acc = result['acc']
+    train_acc.insert(0,0)
+    val_acc = result['val_acc']
+    val_acc.insert(0,0)
+    epochs = range(0,len(val_acc))
+
+    #precision
+    train_pre = result['precision']
+    train_pre.insert(0, 0)
+    val_pre= result['val_precision']
+    val_pre.insert(0, 0)
+
+    #recall
+    train_recall = result['recall']
+    train_recall.insert(0, 0)
+    val_recall = result['val_recall']
+    val_recall.insert(0, 0)
+
+    plt.title("MLP Classifier")
+    plt.subplot(3,1,2)
+    plt.plot(epochs, train_pre, 'r', label='Train Precision')
+    plt.plot(epochs, val_pre, 'b', label="Test Precision")
+    plt.xlabel('Epochs')
+    plt.ylabel('Precision')
+    plt.grid(True)
+
+    plt.subplot(3, 1, 3)
+
+    plt.plot(epochs, train_recall, 'r', label='Train Recall')
+    plt.plot(epochs, val_recall, 'b', label="Test Recall")
+    plt.xlabel('Epochs')
+    plt.ylabel('Recall')
+    plt.grid(True)
+
+    plt.subplot(3, 1, 1)
+    #plt.plot(epochs, train_loss, 'green', label = 'Training loss')
+    #plt.plot(epochs, val_loss, 'yellow', label = "Validation loss")
+    plt.plot(epochs, train_acc, 'r', label='Train Accuracy')
+    plt.plot(epochs, val_acc, 'b', label="Test Accuracy")
+    plt.xlabel('Epochs')
+    plt.ylabel('Accuracy')
+    plt.grid(True)
+    #plt.legend()
+    #plt.show()
+    #plt.savefig()
+
+
+    #plt.subplots_adjust(bottom=0.25, top=0.75)
+    plt.show()
+
+
 
 
 main()

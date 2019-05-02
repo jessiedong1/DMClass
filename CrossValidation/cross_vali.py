@@ -1,6 +1,6 @@
 import pandas as pd
 import random as rd
-import NavieBayes.NBClassifier as nb
+import CrossValidation.NaiveBayes as nb
 import numpy as np
 
 def main():

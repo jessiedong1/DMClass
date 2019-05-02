@@ -1,5 +1,8 @@
-from NavieBayes.SVM import *
+from sklearn.svm import SVC
+from sklearn.metrics import confusion_matrix
 import numpy as np
+
+
 
 def main():
     trainset1 = np.load('train_set1.npy')
@@ -55,4 +58,40 @@ def main():
     print("Precision Ave: {:.4f}".format(precision_avg))
     print("Recall Ave: {:.4f}".format(recall_avg))
 
+def split_x_y(dataset):
+    columns = dataset.shape[1] - 1
+    # print(dataset)
+    x = dataset[:, 7: columns]
+    #print(x.shape)
+    # print(x[:,983])
+    y = dataset[:, columns]
+    #print(y)
+    #print(y.dtype)
+    y = y.astype('int')
+
+    return x, y
+
+def LinearSVM(X_train,y_train, X_test,y_test):
+    clf = SVC(kernel='linear')
+    clf.fit(X_train,y_train)
+    y_pred = clf.predict(X_test)
+
+    tn, fp, fn, tp= confusion_matrix(y_test, y_pred).ravel()
+    precision = 0
+    recall = 0
+    acc = float((tp + tn) / (tp + fn + fp + tn))
+    print("Accuracy: {:.4f}".format(acc))
+    if (tp != 0):
+        precision = float(tp / (tp + fp))
+        recall = float(tp / (tp + fn))
+        print("Precision: {:.4f}".format(precision))
+        print("Recall: {:.4f}".format(recall))
+    print()
+
+    #y_predict = clf.predict(X_test)
+    #print(y_predict)
+    #clf_predictions = clf.predict(X_test)
+    #print("Accuracy: {}%".format(clf.score(X_test, y_test)))
+    #print("Accuracy: {}%".format(clf.score(X_test, y_test)))
+    return acc, precision, recall
 main()
