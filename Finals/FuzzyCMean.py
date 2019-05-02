@@ -1,8 +1,6 @@
 import numpy as np
 from matplotlib import pyplot as plt
-import matplotlib
 
-colors = ['r', 'b']
 def main():
     data = [[0,10],[1,3],[2,3],
             [2,8],[5,1],[5,6],
