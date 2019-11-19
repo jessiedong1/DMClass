@@ -7,7 +7,7 @@ import numpy as np
 from NavieBayes.MLP import *
 def main():
     print()
-    filename = 'D:\Spring2019\DataMining\Dataset\OutputnoLabel.csv'
+    filename = r'D:\UCA\THESIS\BordeauxWines.csv'
     # Load the data
     dataset = nb.loadCSV(filename)
     #print(dataset.columns.values)
@@ -28,7 +28,7 @@ def main():
 def split_x_y(dataset):
     columns = dataset.shape[1]-1
     #print(dataset)
-    x = dataset.iloc[:, 7: columns]
+    x = dataset.iloc[:, 4: columns]
     x = pd.DataFrame(x)
     #print(x[:,983])
     y = dataset.iloc[:,columns]

@@ -6,6 +6,8 @@ import matplotlib.pyplot as plt
 from keras.optimizers import Adam
 from keras import regularizers
 import keras_metrics
+import random as rd
+import collections
 
 def main():
     trainset1 = np.load('train_set1.npy')
@@ -79,23 +81,23 @@ def main():
     print("Fold 2: ")
     print("Accuracy : {:.4f}".format(val_acc2))
     print("Precision: {:.4f}".format(val_pre2))
-    print(" Recall: {:.4f}".format(val_recall2))
+    print("Recall: {:.4f}".format(val_recall2))
     print()
 
     print("Fold 3: ")
     print("Accuracy : {:.4f}".format(val_acc3))
     print("Precision: {:.4f}".format(val_pre3))
-    print(" Recall: {:.4f}".format(val_recall3))
+    print("Recall: {:.4f}".format(val_recall3))
     print()
     print("Fold 4: ")
     print("Accuracy : {:.4f}".format(val_acc4))
     print("Precision: {:.4f}".format(val_pre4))
-    print(" Recall: {:.4f}".format(val_recall4))
+    print("Recall: {:.4f}".format(val_recall4))
     print()
     print("Fold 5: ")
     print("Accuracy : {:.4f}".format(val_acc5))
     print("Precision: {:.4f}".format(val_pre5))
-    print(" Recall: {:.4f}".format(val_recall5))
+    print("Recall: {:.4f}".format(val_recall5))
     print()
     avg_acc = float((val_acc1 + val_acc2 + val_acc3 + val_acc4 + val_acc5) / 5)
     avg_pre = float((val_pre1 + val_pre2 + val_pre3 + val_pre4 + val_pre5) / 5)
@@ -105,12 +107,13 @@ def main():
     print("Precision Ave: {:.4f}".format(avg_pre))
     print("Recall Ave: {:.4f}".format(avg_recall))
 def split_x_y(dataset):
+
     columns = dataset.shape[1]-1
     #print(dataset)
-    x = dataset[:, 7: columns]
-    #print(x[:,983])
+    x = dataset[:, 4: columns]
     y = dataset[:,columns]
-    #print(y)
+    #print(collections.Counter(y))
+
 
 
     return x,y
@@ -125,6 +128,7 @@ def MLP(train_x,train_y,test_x, test_y, epoch, batch_size):
     model.add(layers.Dropout(0.1, noise_shape=None, seed=None))
 
     model.add(layers.Dense(30, activation="relu", kernel_regularizer=regularizers.l2(1e-10), activity_regularizer=regularizers.l1(1e-10)))
+    model.add(layers.Dropout(0.1, noise_shape=None, seed=None))
     model.add(layers.Dense(10, activation="relu", kernel_regularizer=regularizers.l2(1e-10),activity_regularizer=regularizers.l1(1e-10)))
 
     model.add(layers.Dense(1, activation="sigmoid"))
@@ -137,14 +141,15 @@ def MLP(train_x,train_y,test_x, test_y, epoch, batch_size):
 
 # Get the loss and accuracy by using cross validation
     results_mlp = model.fit(train_x,train_y, epochs=epoch, batch_size= batch_size, validation_data=(test_x, test_y))
+
     #print(model.get_weights())
     #weights_mlp = layer.get_weights()
     return results_mlp
 
 
 def Cro_val(trainset1_X, trainset1_y, testset1_X, testset1_y):
-    epoch = 50
-    batch_size = 30
+    epoch = 10
+    batch_size = 3000
     result1 = MLP(trainset1_X, trainset1_y, testset1_X, testset1_y, epoch, batch_size)
 
     show_result(result1)
@@ -219,7 +224,7 @@ def show_result(result_lp):
 
 
     #plt.subplots_adjust(bottom=0.25, top=0.75)
-    plt.show()
+    # plt.show()
 
 
 

@@ -157,7 +157,7 @@ def NBRresult(train_set, test_set):
     # Extract the attributes to be calculated
     atts = train_set.columns
     #print(atts)
-    atts = atts[7:((len(atts)) - 1)]
+    atts = atts[4:((len(atts)) - 1)]
 
     Total_sample = train_set.shape[0]
     train_set_Y, train_set_N = Group_Class(train_set)
@@ -167,6 +167,7 @@ def NBRresult(train_set, test_set):
     # Calculate class distrubution
     pro_Y = float(num_Y / Total_sample)
     pro_N = float(num_N / Total_sample)
+    print(pro_Y,pro_N)
 
     #return matrix, acc, precision,recall
 
@@ -203,6 +204,7 @@ def NBRresult(train_set, test_set):
     # Initilize test dataset
     #test_data = dataset.iloc[50:250, :]
     test_data_Labels = test_set['Label']
+
     # Get the NB in Y class
     test_pro_Y = Get_Pro(test_set, dataset_Y_pro, atts)
     # Get the NB in N class

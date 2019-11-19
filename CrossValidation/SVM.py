@@ -61,7 +61,7 @@ def main():
 def split_x_y(dataset):
     columns = dataset.shape[1] - 1
     # print(dataset)
-    x = dataset[:, 7: columns]
+    x = dataset[:, 4: columns]
     #print(x.shape)
     # print(x[:,983])
     y = dataset[:, columns]
