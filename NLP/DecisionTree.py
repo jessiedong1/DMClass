@@ -1,5 +1,5 @@
 import pandas as pd
-from sklearn.naive_bayes import GaussianNB
+from sklearn import tree
 import numpy as np
 from sklearn.model_selection import train_test_split
 import matplotlib
@@ -36,7 +36,7 @@ def loadCSV(filename):
 def NaiveB(X_train,y_train,X_test,y_test):
 
 
-    gnb = GaussianNB()
+    gnb = tree.DecisionTreeClassifier()
     gnb.fit(X_train, y_train)
     pro = gnb.predict_log_proba(X_test)
     #print(pro)
@@ -61,7 +61,7 @@ def NaiveB(X_train,y_train,X_test,y_test):
     print('fp {}'.format(fp), end = " ")
     print('tn {}'.format(tn), end = " ")
     print()
-    metricx(tp,fn,fp,tn)
+    acc, precision, recall = metricx(tp,fn,fp,tn)
     std = np.linspace(0, 1, 1000000)
 
     plt.scatter(py, pn, c=labels, cmap=matplotlib.colors.ListedColormap(colors))
@@ -74,6 +74,18 @@ def NaiveB(X_train,y_train,X_test,y_test):
     # plt.legend(loc='best', shadow=False, scatterpoints=1)
     # plt.legend()
     #plt.show()
+    from sklearn.tree import export_graphviz
+    export_graphviz(gnb, out_file='tree.dot', class_names=['90-', '90+'], feature_names=X_train.columns.values[0:13],
+                    impurity=False, filled=True)
+
+    import graphviz
+    with open('tree.dot') as f:
+        dot_graph = f.read()
+
+    graph = graphviz.Source(dot_graph)
+    graph.view()
+
+    return acc, precision, recall
 
 def metricx(tp, fn, fp,tn):
     acc = (tp+tn)/((tp+tn+fn+fp))
@@ -83,5 +95,7 @@ def metricx(tp, fn, fp,tn):
     print('recll {}'.format(recall), end = " ")
     print('precision {}'.format(precision), end = " ")
     print()
+
+    return acc, precision,recall
 
 #main()
