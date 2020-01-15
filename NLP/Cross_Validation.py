@@ -11,7 +11,7 @@ import NLP.DecisionTree as dt
 
 def main():
 
-    filename = r'D:\Uca\Thesis\NLP\Class_N.csv'
+    filename = r'D:\Uca\Thesis\NLP\Wine1855.csv'
     dataset, X, y = loadCSV(filename)
 
     Cross_Validation(dataset, 5)

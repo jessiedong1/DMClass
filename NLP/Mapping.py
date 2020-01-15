@@ -15,10 +15,10 @@ def main():
     cww = cww[1:985]
 
 
-    filename = r'D:\Uca\Thesis\NLP\OutputnoLabel.csv'
+    filename = r'D:\Uca\Thesis\NLP\Wine1855.csv'
 
     dataset = load_file(filename)
-    dataset = dataset.drop(columns=['Wine', 'Year', 'Score', 'Price', 'Country', 'Region', 'Issue Date'])
+    dataset = dataset.drop(columns=['Wine', 'Year', 'Score', 'Price'])
     #print(dataset.shape)
     #print(dataset)
     mapping(cww, dataset)

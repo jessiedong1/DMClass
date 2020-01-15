@@ -7,13 +7,12 @@ rd.seed(0)
 
 def main():
     #rd.seed(1)
-    filename =r'D:\Uca\Thesis\BordeauxWines.csv'
+    #filename =r'D:\Uca\Thesis\BordeauxWines.csv'
 
+    filename = r'D:\Uca\Thesis\NLP\Wine1855.csv'
     # Load the data
     dataset = nb.loadCSV(filename)
     #print(dataset.columns.values)
-
-
 
     #r1= rd.sample(range(0, dataset.shape[0]), 200)
     #r2 = rd.sample(range(0, dataset.shape[0]), 200)
@@ -181,6 +180,7 @@ def Cross_Validation(dataset, n_splits):
 #
 # #Naive Bayes
     print("Result for fold 1")
+
     dataset_Y_pro_1, dataset_N_pro_1, Pro_fold_1, acc1, precision1, recall1 = nb.NBRresult(train_set1, test_set1)
     dataset_Y_pro_1.to_csv(r'D:\Uca\Thesis\Result\Dataset_Y_pro_1.csv')
     dataset_N_pro_1.to_csv(r'D:\Uca\Thesis\Result\Dataset_N_pro_1.csv')
