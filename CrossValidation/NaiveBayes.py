@@ -53,6 +53,21 @@ def Cal_All_Attributs_Ori(class_Y, atts,pro_Y,):
     ar = pd.DataFrame(array, atts)
     return ar
 
+def Zero_Frequency_min(dataset):
+    for i in range(dataset.shape[0]-1):
+        if dataset.iloc[i] == 0:
+            dataset.iloc[i] = dataset[dataset > .01].min()
+
+    return dataset
+
+
+def Zero_Frequency_mean(dataset):
+    for i in range(dataset.shape[0]-1):
+        if dataset.iloc[i] == 0:
+            dataset.iloc[i] = dataset.mean()
+
+    return dataset
+
 #Based on training set, calculate the bayesian
 def Get_Pro(test_data,dataset_Y_Pro, class_Y):
     atts = test_data.columns[4:1001]
@@ -74,7 +89,10 @@ def Get_Pro(test_data,dataset_Y_Pro, class_Y):
     class_Y = class_Y.iloc[:, 988:1001]
     train_set_mean = class_Y.mean()
     train_set_var = class_Y.var()
-    print(train_set_var)
+
+    train_set_mean = Zero_Frequency_mean(train_set_mean)
+    train_set_var = Zero_Frequency_mean(train_set_var)
+
     for i in range(test_data.shape[0]):
         for j in range(984, 997):
             pro.iloc[i][j] = (1 / (math.sqrt(2 * math.pi * train_set_var[j-984]))) * (

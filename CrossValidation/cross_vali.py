@@ -7,9 +7,9 @@ rd.seed(0)
 
 def main():
     #rd.seed(1)
-    #filename =r'D:\Uca\Thesis\BordeauxWines.csv'
+    filename =r'D:\Uca\Thesis\BordeauxWines.csv'
 
-    filename = r'D:\Uca\Thesis\NLP\Wine1855.csv'
+    #filename = r'D:\Uca\Thesis\NLP\Wine1855.csv'
     # Load the data
     dataset = nb.loadCSV(filename)
     #print(dataset.columns.values)
@@ -165,20 +165,20 @@ def Cross_Validation(dataset, n_splits):
     #print(N_1.shape[0], N_2.shape[0], N_3.shape[0], N_4.shape[0], N_5.shape[0])
 
     # Save data
-    # np.save('train_set1', train_set1)
-    # np.save('test_set1', test_set1)
-    # np.save('train_set2', train_set2)
-    # np.save('test_set2', test_set2)
-    # np.save('train_set3', train_set3)
-    # np.save('test_set3', test_set3)
-    # np.save('train_set4', train_set4)
-    # np.save('test_set4', test_set4)
-    # np.save('train_set5', train_set5)
-    # np.save('test_set5', test_set5)
+    np.save('train_set1', train_set1)
+    np.save('test_set1', test_set1)
+    np.save('train_set2', train_set2)
+    np.save('test_set2', test_set2)
+    np.save('train_set3', train_set3)
+    np.save('test_set3', test_set3)
+    np.save('train_set4', train_set4)
+    np.save('test_set4', test_set4)
+    np.save('train_set5', train_set5)
+    np.save('test_set5', test_set5)
 
 
 #
-# #Naive Bayes
+# # #Naive Bayes
     print("Result for fold 1")
 
     dataset_Y_pro_1, dataset_N_pro_1, Pro_fold_1, acc1, precision1, recall1 = nb.NBRresult(train_set1, test_set1)
