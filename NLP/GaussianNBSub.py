@@ -9,12 +9,13 @@ import math
 
 def main():
 
-    filename = r'D:\Uca\Thesis\NLP\Dataset\Wine1855_Category.csv'
+    filename = r'D:\Uca\Thesis\NLP\Dataset\Wine1855_SUB.csv'
     dataset = loadCSV(filename)
     dataset_train = dataset[200:1000]
     dataset_test = dataset[:7]
     #print(dataset_test)
     pro_oris = NormalDisMin(dataset_train,dataset_test)
+    print(pro_oris)
 
     #Confusion_Matrix(pro_oris)
 
@@ -29,8 +30,11 @@ def loadCSV(filename):
     COLUMNS = dataset.shape[1]
     dataset_attributes = dataset.iloc[:,4:COLUMNS]
     normalized_df = (dataset_attributes - dataset_attributes.min()) / (dataset_attributes.max() - dataset_attributes.min())
+
     normalized_df['Label'] = dataset['Label']
+    normalized_df = normalized_df.fillna(0)
     return normalized_df
+
 
     #return dataset
 
@@ -93,10 +97,11 @@ def NormalDisMin(train_set, test_set):
 
     ROWS = test_set.shape[0]
     COLS = test_set.shape[1]-1
+
     pro_yes = [[0] * COLS] * ROWS
-    pro_yes = pd.DataFrame(pro_yes, columns=test_set.columns[0:13], dtype=float)
+    pro_yes = pd.DataFrame(pro_yes, columns=test_set.columns[0:COLS], dtype=float)
     pro_no = [[0] * COLS] * ROWS
-    pro_no = pd.DataFrame(pro_no, columns=test_set.columns[0:13], dtype=float)
+    pro_no = pd.DataFrame(pro_no, columns=test_set.columns[0:COLS], dtype=float)
     for i in range(test_set.shape[0]):
         for j in range(COLS):
             pro_yes.iloc[i][j] = (1/(math.sqrt(2*math.pi*train_set_Yes_var[j])))*(math.exp(-((test_set.iloc[i][j]-train_set_Yes_mean[j])**2)/(2*train_set_Yes_var[j])))
@@ -171,8 +176,9 @@ def Confusion_Matrix(pro_Ori):
     return acc, precision, recall
 
 def Split_X_y(dataset):
-    X = dataset.iloc[:, 0:13]
-    y = dataset.iloc[:, 13]
+    cols = dataset.shape[1]-1
+    X = dataset.iloc[:, 0:cols]
+    y = dataset.iloc[:, cols]
 
     return X, y
 

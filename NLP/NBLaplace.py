@@ -1,7 +1,24 @@
 import pandas as pd
 import random as rd
 import numpy as np
-import math
+"""
+Navie Bayes without any estimation
+"""
+"""
+    array = {'name':[1,2,4],
+             'age':[20,30,40]}
+    labels = ['1','2','3']
+    df = pd.DataFrame(array,labels)
+"""
+def main():
+    filename = r'D:\Uca\Thesis\NLP\Dataset\Wine1855.csv'
+
+    dataset = loadCSV(filename)
+    dataset_train = dataset[200:1000]
+    dataset_test = dataset[:7]
+    pro_oris = NBRresult(dataset_train, dataset_test)
+    print(pro_oris)
+
 
 #Load CSV File
 def loadCSV(filename):
@@ -17,7 +34,8 @@ def Group_Class(dataset):
     #class_N, class_Y = dataset.groupby('Label')
     return [class_Y, class_N]
 
-#Calculate the probablity of one attributs in one class binary values
+
+#Calculate the probablity of one attributs in one class
 def Cal_Pro_att_Ori(class_Y,att,pro_Y):
     #print(class_Y)
     #att_0, att_1= (g for _, g in class_Y.groupby(att))
@@ -42,7 +60,7 @@ def Cal_Pro_att_Ori(class_Y,att,pro_Y):
     #pro_1 = float((att_1 + 30*pro_Y) / (len(class_Y) + 30))
     return pro_0, pro_1
 def Cal_All_Attributs_Ori(class_Y, atts,pro_Y,):
-    size = 984
+    size = len(atts)
     pro_0 = [0]*size
     pro_1 = [0]*size
     for i in range(size):
@@ -53,44 +71,24 @@ def Cal_All_Attributs_Ori(class_Y, atts,pro_Y,):
     ar = pd.DataFrame(array, atts)
     return ar
 
-#Handle zero frequency in continous values
-def Zero_Frequency_min(dataset):
-    for i in range(dataset.shape[0]-1):
-        if dataset.iloc[i] == 0:
-            dataset.iloc[i] = dataset[dataset > .01].min()
-
-    return dataset
 
 #Based on training set, calculate the bayesian
-def Get_Pro(test_data,dataset_Y_Pro, class_Y):
-    atts = test_data.columns[4:1001]
+def Get_Pro(test_data,dataset_Y_Pro,atts):
     test_data = test_data[atts]
     #print(test_data.iloc[0,0])
     ROWS = test_data.shape[0]
-    COLS = 997
+    COLS = test_data.shape[1]
     pro = [[0]* COLS]*ROWS
     pro = pd.DataFrame(pro, columns=atts,dtype=float)
     for i in range(test_data.shape[0]):
-        for j in range(0,984):
-
+        for j in range(len(atts)):
             if(test_data.iloc[i][j] == 0):
                 pro.iloc[i][j] = dataset_Y_Pro.iloc[j][0]
             else:
                 pro.iloc[i][j] = dataset_Y_Pro.iloc[j][1]
     #ar = pd.DataFrame(pro, columns=atts)
+
     #print(ar)
-    class_Y = class_Y.iloc[:, 988:1001]
-    train_set_mean = class_Y.mean()
-    train_set_var = class_Y.var()
-
-    train_set_mean = Zero_Frequency_min(train_set_mean)
-    train_set_var = Zero_Frequency_min(train_set_var)
-
-    for i in range(test_data.shape[0]):
-        for j in range(984, 997):
-            pro.iloc[i][j] = (1 / (math.sqrt(2 * math.pi * train_set_var[j-984]))) * (
-                math.exp(-((test_data.iloc[i][j-984] - train_set_mean[j-984]) ** 2) / (2 * train_set_var[j-984])))
-
     return pro
 
 def Cal_NB(test_pro):
@@ -160,7 +158,6 @@ def Confusion_Matrix(pro_Ori):
 
 #Get the result
 def NBRresult(train_set, test_set):
-    rd.seed(1)
     # print(filename)
 
 
@@ -168,8 +165,7 @@ def NBRresult(train_set, test_set):
     # Extract the attributes to be calculated
     atts = train_set.columns
     #print(atts)
-    atts = atts[4:988]
-
+    atts = atts[4:((len(atts)) - 1)]
     Total_sample = train_set.shape[0]
     train_set_Y, train_set_N = Group_Class(train_set)
 
@@ -178,31 +174,6 @@ def NBRresult(train_set, test_set):
     # Calculate class distrubution
     pro_Y = float(num_Y / Total_sample)
     pro_N = float(num_N / Total_sample)
-    print(pro_Y,pro_N)
-
-    #return matrix, acc, precision,recall
-
-    # print(len(atts))
-    # data = dataset[atts]
-    # print(data)
-    # print(dataset.iat[0,0])
-
-    # print(dataset['GRAPEFRUIT PEEL'])
-    # print(atts)
-    # print(dataset.values)
-    # fold = Cross_Validation(dataset, 4)
-
-    # Cross_Validation(dataset, 5)
-
-    # print(num_X,num_Y)
-
-    # dataset_Y = pd.DataFrame(dataset_Y)
-    # dataset_N = pd.DataFrame(dataset_N)
-    # print(dataset_Y)
-    # Testing Cal_Pro_att0 function
-    #att = 'GRAPEFRUIT'
-    #pro0, pro1 =Cal_Pro_att_Ori(train_set_Y,att)
-    #print(pro0, ' ', pro1)
 
     # Calculating all the attributes probabliaty in Y/N class without any fix
     dataset_Y_pro = Cal_All_Attributs_Ori(train_set_Y, atts,pro_Y)
@@ -215,13 +186,10 @@ def NBRresult(train_set, test_set):
     # Initilize test dataset
     #test_data = dataset.iloc[50:250, :]
     test_data_Labels = test_set['Label']
-
     # Get the NB in Y class
-    test_pro_Y = Get_Pro(test_set, dataset_Y_pro, train_set_Y)
-
+    test_pro_Y = Get_Pro(test_set, dataset_Y_pro, atts)
     # Get the NB in N class
-    test_pro_N = Get_Pro(test_set, dataset_N_pro, train_set_N)
-
+    test_pro_N = Get_Pro(test_set, dataset_N_pro, atts)
     # print(test_pro)
 
     # Calculate NB
@@ -230,56 +198,10 @@ def NBRresult(train_set, test_set):
     #pro_Ori.to_csv(r'D:\Spring2019\DataMining\Output\Dataset_ALL_Pro.csv')
     #Print the Final probablity
     #print(pro_Ori)
-    acc, pre, recall = Confusion_Matrix(pro_Ori)
+    #acc, pre, recall = Confusion_Matrix(pro_Ori)
 
-    return dataset_Y_pro,dataset_N_pro, pro_Ori, acc, pre, recall
+    return pro_Ori
 
-#
-# def main():
-#
-#
-#
-#     filename = r'D:\Uca\Thesis\NLP\Wine1855.csv'
-#     # Load the data
-#     dataset = loadCSV(filename)
-#     train_set = dataset.iloc[200:300,:]
-#
-#     test_data = dataset.iloc[100:159,:]
-#     atts = train_set.columns
-#     # print(atts)
-#     atts = atts[4:988]
-#     test_data = test_data[atts]
-#
-#     atts = train_set.columns
-#     # print(atts)
-#     atts = atts[4:988]
-#
-#     Total_sample = train_set.shape[0]
-#     train_set_Y, train_set_N = Group_Class(train_set)
-#
-#     num_Y = train_set_Y.shape[0]
-#     num_N = train_set_N.shape[0]
-#     # Calculate class distrubution
-#     pro_Y = float(num_Y / Total_sample)
-#     pro_N = float(num_N / Total_sample)
-#     print(pro_Y, pro_N)
-#     dataset_Y_pro = Cal_All_Attributs_Ori(train_set_Y, atts, pro_Y)
-#     dataset_N_pro = Cal_All_Attributs_Ori(train_set_N, atts, pro_N)
-#     # print(test_data.iloc[0,0])
-#     ROWS = test_data.shape[0]
-#     COLS = test_data.shape[1]
-#     pro = [[0] * COLS] * ROWS
-#     pro = pd.DataFrame(pro, columns=atts, dtype=float)
-#     for i in range(test_data.shape[0]):
-#         for j in range(0, 984):
-#             if (test_data.iloc[i][j] == 0):
-#                 pro.iloc[i][j] = dataset_Y_pro.iloc[j][0]
-#             else:
-#                 pro.iloc[i][j] = dataset_Y_pro.iloc[j][1]
-#     # ar = pd.DataFrame(pro, columns=atts)
-#     # print(ar)
-#     print(pro)
-#
-#
-#
-# main()
+
+
+#main()

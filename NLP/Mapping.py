@@ -1,6 +1,11 @@
+"""
+This class mapped Normalized name into category and sub-category
+Jessie 1/18/2020
+"""
+
+
 import pandas as pd
-import numpy as np
-import random as rd
+
 
 def main():
     cww = r'D:\Uca\Thesis\NLP\CWW.csv'
@@ -32,12 +37,11 @@ def load_file(filename):
     return dataset
 
 def mapping(cww, dataset):
-    dataset = dataset.drop(columns=['Name', 'Year', 'Score', 'Price'])
+    dataset = dataset.drop(columns=['Wine', 'Year', 'Score', 'Price'])
     ROWS = dataset.shape[0]
     COLUMNS = len(cww['CATEGORY_NAME'].unique())
     print(ROWS)
     print(COLUMNS)
-
     #sub_names = cww.SUBCATEGORY_NAME.unique()
     sub_names = cww['CATEGORY_NAME'].unique()
     arr = [[0] * COLUMNS] * ROWS
@@ -69,11 +73,5 @@ def mapping(cww, dataset):
     #print(dataset.columns)
 
     #arr.to_csv(r'D:\Uca\Thesis\NLP\Dataset\BordeauxWines_Catrgory.csv')
-
-
-
-
-
-
 
 main()

@@ -42,9 +42,6 @@ def Cross_Validation(dataset, n_splits):
 
 #Split 90+ into 5 folds
     ry = rd.sample(range(0, num_class_Y), num_class_Y)
-
-
-
     #print(ry1)
     ry1 = ry[0:(foldsize_Y)]
     ry2 = ry[foldsize_Y: (foldsize_Y * 2)]
